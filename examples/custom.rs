@@ -10,32 +10,27 @@
 //! If you just want to see how to create a custom entry with minimal boilerplate,
 //! see the `custom_minimal` example instead.
 
-use bevy::prelude::*;
-use bevy::input::mouse::MouseButtonInput;
-use bevy::input::ButtonState;
 use bevy::ecs::system::lifetimeless::SRes;
 use bevy::ecs::system::SystemParam;
-use iyes_perf_ui::prelude::*;
+use bevy::input::mouse::MouseButtonInput;
+use bevy::input::ButtonState;
+use bevy::prelude::*;
 use iyes_perf_ui::entry::PerfUiEntry;
+use iyes_perf_ui::prelude::*;
 
 use std::time::Duration;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-
         // we want Bevy to measure these values for us:
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
-
         .add_plugins(PerfUiPlugin)
-
         // we must register our custom entry type
         .add_perf_ui_simple_entry::<PerfUiTimeSinceLastClick>()
-
         .init_resource::<TimeSinceLastClick>()
         .add_systems(Startup, setup)
         .add_systems(Update, handle_click)
-
         .run();
 }
 
@@ -129,10 +124,7 @@ impl PerfUiEntry for PerfUiTimeSinceLastClick {
         Some(d.as_secs_f64())
     }
 
-    fn format_value(
-        &self,
-        value: &Self::Value,
-    ) -> String {
+    fn format_value(&self, value: &Self::Value) -> String {
         // we can use a premade helper function for nice-looking formatting
         let mut s = iyes_perf_ui::utils::format_pretty_float(self.digits, self.precision, *value);
         // (and append units to it)
@@ -143,18 +135,12 @@ impl PerfUiEntry for PerfUiTimeSinceLastClick {
     }
 
     // (optional) Called every frame to determine if a custom color should be used for the value
-    fn value_color(
-        &self,
-        value: &Self::Value,
-    ) -> Option<Color> {
+    fn value_color(&self, value: &Self::Value) -> Option<Color> {
         self.color_gradient.get_color_for_value(*value as f32)
     }
 
     // (optional) Called every frame to determine if the value should be highlighted
-    fn value_highlight(
-        &self,
-        value: &Self::Value,
-    ) -> bool {
+    fn value_highlight(&self, value: &Self::Value) -> bool {
         self.threshold_highlight
             .map(|t| (*value as f32) > t)
             .unwrap_or(false)
@@ -164,9 +150,9 @@ impl PerfUiEntry for PerfUiTimeSinceLastClick {
 fn handle_click(
     time: Res<Time>,
     mut lastclick: ResMut<TimeSinceLastClick>,
-    mut evr_mouse: EventReader<MouseButtonInput>,
+    mut msg_mouse: MessageReader<MouseButtonInput>,
 ) {
-    for ev in evr_mouse.read() {
+    for ev in msg_mouse.read() {
         if ev.state == ButtonState::Pressed {
             lastclick.last_click = time.elapsed();
         }

@@ -9,13 +9,13 @@
 //! If you want to see how to add support for all the fancy formatting features
 //! of the library, to make things look pretty, see the `custom` example instead.
 
-use bevy::prelude::*;
-use bevy::input::mouse::MouseButtonInput;
-use bevy::input::ButtonState;
 use bevy::ecs::system::lifetimeless::SRes;
 use bevy::ecs::system::SystemParam;
-use iyes_perf_ui::prelude::*;
+use bevy::input::mouse::MouseButtonInput;
+use bevy::input::ButtonState;
+use bevy::prelude::*;
 use iyes_perf_ui::entry::PerfUiEntry;
+use iyes_perf_ui::prelude::*;
 
 use std::time::Duration;
 
@@ -23,14 +23,11 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(PerfUiPlugin)
-
         // we must register our custom entry type
         .add_perf_ui_simple_entry::<PerfUiTimeSinceLastClick>()
-
         .init_resource::<TimeSinceLastClick>()
         .add_systems(Startup, setup)
         .add_systems(Update, handle_click)
-
         .run();
 }
 
@@ -87,9 +84,9 @@ impl PerfUiEntry for PerfUiTimeSinceLastClick {
 fn handle_click(
     time: Res<Time>,
     mut lastclick: ResMut<TimeSinceLastClick>,
-    mut evr_mouse: EventReader<MouseButtonInput>,
+    mut msg_mouse: MessageReader<MouseButtonInput>,
 ) {
-    for ev in evr_mouse.read() {
+    for ev in msg_mouse.read() {
         if ev.state == ButtonState::Pressed {
             lastclick.last_click = time.elapsed();
         }

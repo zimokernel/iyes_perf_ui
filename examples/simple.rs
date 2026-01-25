@@ -7,16 +7,13 @@ use iyes_perf_ui::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-
         // we want Bevy to measure these values for us:
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
-        .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
+        .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin::default())
         .add_plugins(bevy::render::diagnostic::RenderDiagnosticsPlugin)
-
         .add_plugins(PerfUiPlugin)
         .add_systems(Startup, setup)
-
         .run();
 }
 
